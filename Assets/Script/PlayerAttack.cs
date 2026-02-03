@@ -22,7 +22,6 @@ public class PlayerAttack : MonoBehaviour
     {
         if (context.started && Time.time >= _nextAttackTime)
         {
-
             PerformAttack();
             _nextAttackTime = Time.time + attackCooldown;
         }
@@ -34,13 +33,13 @@ public class PlayerAttack : MonoBehaviour
 
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
 
-        foreach (Collider2D enemyCollider in hitEnemies)
+        foreach (Collider2D collider in hitEnemies) 
         {
-            Enemy enemy = enemyCollider.GetComponent<Enemy>();
+            IDamageable target = collider.GetComponent<IDamageable>();
 
-            if (enemy != null)
+            if (target != null)
             {
-                enemy.TakeDamage(attackDamage);
+                target.TakeDamage(attackDamage);
             }
         }
     }

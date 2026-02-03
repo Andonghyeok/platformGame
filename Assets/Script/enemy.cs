@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class Enemy : MonoBehaviour , IDamageable
 {
     [Header("능력치")]
     public float _maxHealth = 50f;
@@ -16,8 +16,17 @@ public class Enemy : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
+
+
+    private System.Collections.IEnumerator HitEffectRoutine()
+    {
+        spriteRenderer.color = hitColor;
+        yield return new WaitForSeconds(0.1f);
+        spriteRenderer.color = Color.white;
+    }
     public void TakeDamage(float damage)
     {
+
         _currentHealth -= damage;
         Debug.Log($"{gameObject.name}이(가) {damage}의 데미지를 입음! 남은 체력: {_currentHealth}");
         StopAllCoroutines();
@@ -29,17 +38,11 @@ public class Enemy : MonoBehaviour
             Die();
         }
     }
-
-    private System.Collections.IEnumerator HitEffectRoutine()
-    {
-        spriteRenderer.color = hitColor;
-        yield return new WaitForSeconds(0.1f);
-        spriteRenderer.color = Color.white;
-    }
-
     private void Die()
     {
         Debug.Log($"{gameObject.name} 사망!");
         Destroy(gameObject);
     }
+
+
 }
