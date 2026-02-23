@@ -5,10 +5,11 @@ using UnityEngine.InputSystem;
 
 public class PlayerMove : MonoBehaviour
 {
+    [Header("참조")]
     public TrailRenderer trailRenderer;
-
     private Rigidbody2D rigid;
     private SpriteRenderer spriteRenderer;
+    private Animator anim;
 
     [Header("기본 이동 구현")]
     public float MoveSpeed;
@@ -42,6 +43,7 @@ public class PlayerMove : MonoBehaviour
     {
         rigid = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        anim = GetComponent<Animator>();
 
         if (trailRenderer != null) trailRenderer.emitting = false;
         
@@ -58,6 +60,22 @@ public class PlayerMove : MonoBehaviour
     private void Update()
     {
         ChargingTimer();
+        UpdateAnimations();
+    }
+    private void UpdateAnimations()
+    {
+        // 1. 달리기 (가로 속도)
+        anim.SetFloat("Speed", Mathf.Abs(rigid.linearVelocity.x));
+
+        // 2. 바닥 체크
+        anim.SetBool("IsGrounded", isGrounded);
+
+        // 3. 점프와 낙하 (세로 속도)
+        // rigid.linearVelocity.y 값이 양수면 상승(Jump), 음수면 하강(Fall)입니다.
+        anim.SetFloat("yVelocity", rigid.linearVelocity.y);
+
+        // 4. 대시 상태 전달
+        anim.SetBool("IsDashing", isDashing);
     }
 
 
@@ -127,7 +145,7 @@ public class PlayerMove : MonoBehaviour
 
     private void ApplyMove()
     {
-        if (isJumpCharging || isJumpCharging)
+        if (isJumpCharging || isDashCharging)
         {
             if (isJumpCharging) rigid.linearVelocity = Vector2.zero;
             return;
@@ -169,16 +187,14 @@ public class PlayerMove : MonoBehaviour
         isDashCharging = false;
         canDash = false;
         isDashing = true;
+        // 여기서 isDashing이 true가 되면, UpdateAnimations에서 자동으로 
+        // 애니메이터의 isDashing 파라미터를 true로 만듭니다.
 
         float chargeRatio = dashChargeTime / maxDashChargeTime;
         float currentDashSpeed = Mathf.Lerp(minDashSpeed, maxDashSpeed, chargeRatio);
 
-        Debug.Log($" 최종 대시 속도: {currentDashSpeed:F1}");
-
         float originalGravity = rigid.gravityScale;
         rigid.gravityScale = 0f;
-        
-
         rigid.linearVelocity = new Vector2(currentDashSpeed * _lastDirection, 0f);
 
         if (trailRenderer != null) trailRenderer.emitting = true;
@@ -188,12 +204,9 @@ public class PlayerMove : MonoBehaviour
         if (trailRenderer != null) trailRenderer.emitting = false;
 
         rigid.gravityScale = 3.0f;
-        isDashing = false;
+        isDashing = false; // 대시 종료 -> 애니메이션도 다시 기본 상태로 돌아감
 
-        Debug.Log(" 대시 종료, 쿨타임 시작");
         yield return new WaitForSeconds(2f);
-
         canDash = true;
-        Debug.Log("대시 재사용 가능!");
     }
 }
