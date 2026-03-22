@@ -12,8 +12,8 @@ TagManager:
   - Water
   - UI
   - Enemy
-  - 
-  - 
+  - Player
+  - ada
   - 
   - 
   - 
@@ -38,8 +38,14 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: BackGround
+    uniqueID: 1175549961
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: ForeGround
+    uniqueID: 3301618685
     locked: 0
   m_RenderingLayers:
   - Default
