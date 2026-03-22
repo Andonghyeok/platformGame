@@ -9,6 +9,7 @@ public class PlayerAttack : MonoBehaviour
     public float attackDamage = 10f;    // 공격 데미지
     public float attackCooldown = 0.3f; // 공격 속도
     public LayerMask enemyLayers;        // 적 레이어
+    private Animator anim;
 
     private float _nextAttackTime = 0f;
     private PlayerMove _playerMove;  
@@ -16,15 +17,16 @@ public class PlayerAttack : MonoBehaviour
     private void Awake()
     {
         _playerMove = GetComponent<PlayerMove>();
+        anim = GetComponent<Animator>();
     }
 
     public void OnAttack(InputAction.CallbackContext context)
     {
         if (context.started && Time.time >= _nextAttackTime)
         {
-
             PerformAttack();
             _nextAttackTime = Time.time + attackCooldown;
+            anim.SetTrigger("Attack");
         }
     }
 
@@ -34,13 +36,13 @@ public class PlayerAttack : MonoBehaviour
 
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
 
-        foreach (Collider2D enemyCollider in hitEnemies)
+        foreach (Collider2D collider in hitEnemies) 
         {
-            Enemy enemy = enemyCollider.GetComponent<Enemy>();
+            IDamageable target = collider.GetComponent<IDamageable>();
 
-            if (enemy != null)
+            if (target != null)
             {
-                enemy.TakeDamage(attackDamage);
+                target.TakeDamage(attackDamage);
             }
         }
     }
