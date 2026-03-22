@@ -177,7 +177,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b75c0a3bfe6d48409283e4f0f924399, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemName: item
+  itemName: Coin
   scoreValue: 10
 --- !u!58 &-3146125440717246444
 CircleCollider2D:
