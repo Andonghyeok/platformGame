@@ -79,23 +79,36 @@ public class CharacterStat
         float finalValue = BaseValue;
         float sumPercentAdd = 0;
 
+        // 1. Flat부터 싹 다 더합니다.
         for (int i = 0; i < statModifiers.Count; i++)
         {
             StatModifier mod = statModifiers[i];
-
             if (mod.Type == StatModType.Flat)
+            {
                 finalValue += mod.Value;
-            else if (mod.Type == StatModType.PercentAdd)
+            }
+        }
+
+        // 2. PercentAdd 계산을 위해 별도로 합산
+        for (int i = 0; i < statModifiers.Count; i++)
+        {
+            StatModifier mod = statModifiers[i];
+            if (mod.Type == StatModType.PercentAdd)
             {
                 sumPercentAdd += mod.Value;
-                if (i + 1 >= statModifiers.Count || statModifiers[i + 1].Type != StatModType.PercentAdd)
-                {
-                    finalValue *= 1 + sumPercentAdd;
-                    sumPercentAdd = 0;
-                }
             }
-            else if (mod.Type == StatModType.PercentMult)
-                finalValue *= 1 + mod.Value;
+        }
+        // Flat이 적용된 finalValue에 한 번에 PercentAdd를 곱합니다.
+        finalValue *= (1 + sumPercentAdd);
+
+        // 3. 마지막으로 PercentMult 적용
+        for (int i = 0; i < statModifiers.Count; i++)
+        {
+            StatModifier mod = statModifiers[i];
+            if (mod.Type == StatModType.PercentMult)
+            {
+                finalValue *= (1 + mod.Value);
+            }
         }
 
         return (float)Math.Round(finalValue, 4);

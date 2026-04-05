@@ -53,6 +53,8 @@ public class PlayerController : MonoBehaviour, IDamageable
         UpdateDirection();
         ProcessInput();
         UpdateAnimations();
+
+
     }
 
     void FixedUpdate()
@@ -99,7 +101,6 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     void Move()
     {
-        // [수정] 이제 stats.MoveSpeed.Value를 사용하여 최종 계산된 속도를 가져옵니다.
         float x = input.MoveInput.x * stats.MoveSpeed.Value;
         rb.linearVelocity = new Vector2(x, rb.linearVelocity.y);
 

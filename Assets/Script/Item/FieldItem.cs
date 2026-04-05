@@ -2,18 +2,24 @@ using UnityEngine;
 
 public class FieldItem : MonoBehaviour
 {
-    public string itemName; // 아이템 이름
-    public int scoreValue = 10; // 점수나 증가시킬 수치
+    public int itemID;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // 1. 부딪힌 대상이 플레이어인지 확인
         if (collision.CompareTag("Player"))
         {
-            // 2. 플레이어의 점수를 올리거나 인벤토리에 추가하는 로직 실행
-            Debug.Log(itemName + "을 획득했습니다!");
+            EffectHandler handler = collision.GetComponent<EffectHandler>();
 
-            // 3. 먹었으니 월드에서 제거
+            if (handler != null)
+            {
+                Debug.Log($"[FieldItem] 플레이어 감지! ID {this.itemID} 적용 시도");
+                handler.ApplyEffect(this.itemID);
+            }
+            else
+            {
+                Debug.LogError("[FieldItem] 부딪힌 대상에게 EffectHandler가 없습니다! 스크립트를 확인하세요.");
+            }
+
             Destroy(gameObject);
         }
     }

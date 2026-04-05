@@ -1,0 +1,5 @@
+ID,Name,Description,EffectAmount
+int,string,string,float
+101,HealPotion,체력 회복,20
+102,SpeedBuff,이동속도 증가,5
+201,Poison,지속 피해,-2
